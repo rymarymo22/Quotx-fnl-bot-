@@ -2,4 +2,4 @@ pandas
 numpy
 selenium
 webdriver-manager
-python-telegram-bot==13.17
+python-telegram-bot==13.7
