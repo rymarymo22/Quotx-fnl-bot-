@@ -1,0 +1,5 @@
+pandas
+numpy
+selenium
+webdriver-manager
+python-telegram-bot==13.15
