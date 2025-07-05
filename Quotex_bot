@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""
+بوت تداول كوتكس - الإصدار النهائي للإنتاج
+Quotex Trading Bot - Final Production Version
+إشارات بقوة 90-100% فقط
+"""
+
+import asyncio
+import logging
+import time
+import threading
+import signal
+import sys
+import subprocess
+import glob
+import json
+import random
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+from collections import defaultdict
+from dataclasses import dataclass
+
+# المكتبات المطلوبة
+import pandas as pd
+import numpy as np
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import telegram
+from telegram import Bot
+from telegram.error import TelegramError
+
+# إعدادات البوت
+TELEGRAM_BOT_TOKEN = "ضع_التوكن_هنا"
+TELEGRAM_CHAT_ID = "ضع_chat_id_هنا"
+QUOTEX_URL = "https://qxbroker.com/en/trade"
+TIMEFRAMES = [1, 3, 5]  # دقائق
+RECOMMENDATION_TIMEFRAME = 1  # دقيقة واحدة
+SIGNAL_ADVANCE_TIME = 20  # ثانية قبل الدخول
+MIN_SIGNAL_STRENGTH = 90  # قوة التوصية الدنيا
+MAX_SIGNALS_PER_HOUR = 10
+ANALYSIS_INTERVAL = 30  # ثانية
+
+# أزواج العملات النشطة
+CURRENCY_PAIRS = [
+    "EUR/USD", "
+# إعداد التسجيل
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler("quotex_bot.log"),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+logger = setup_logging()
+
+@dataclass
+class AnalysisResult:
+    signal_strength: float
+    direction: str  # 'CALL' or 'PUT'
+    indicators: Dict
+    pattern: str
+    support_resistance: Dict
+    confidence_score: float
+class TechnicalAnalyzer:
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+    
+    def calculate_rsi(self, prices: List[float], period: int = 14) -> float:
+        """حساب مؤشر RSI"""
+        if len(prices) < period + 1:
+            return 50.0
+        
+        deltas = np.diff(prices)
+        gains = np.where(deltas > 0, deltas, 0)
+        losses = np.where(deltas < 0, -deltas, 0)
+        
+        avg_gain = np.mean(gains[-period:])
+        avg_loss = np.mean(losses[-period:])
+        
+        if avg_loss == 0:
+            return 100.0
+        
+        rs =
