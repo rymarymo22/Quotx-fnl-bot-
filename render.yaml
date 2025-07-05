@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: quotex-bot
+    env: python
+    buildCommand: ""
+    startCommand: python3 quotex_bot_production.py
+    plan: free
